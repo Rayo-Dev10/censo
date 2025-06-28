@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análisis Censo Nacional de Población y Vivienda 2018</title>
+    <title>Análisis Interactivo | Censo Nacional de Población y Vivienda 2018</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,21 +14,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Custom styles */
+        /* Custom base styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light blue-gray background */
-            color: #1e293b; /* Dark slate text */
+            background-color: #f8fafc; /* Lighter gray background */
+            color: #1e293b; /* Slate-800 text */
         }
-        
+
         /* Animation for elements fading in on scroll */
         .fade-in-section {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
 
         .fade-in-section.is-visible {
@@ -38,7 +41,7 @@
 
         /* Gradient text style */
         .gradient-text {
-            background: linear-gradient(to right, #3b82f6, #1e40af);
+            background: linear-gradient(to right, #2563eb, #4f46e5); /* Blue-600 to Indigo-600 */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -46,52 +49,43 @@
         /* Custom card styling */
         .stat-card {
             background-color: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem; /* 16px */
+            padding: 2rem; /* 32px */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0; /* Slate-200 border */
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        /* Progress bar styling */
-        .progress-bar-container {
-            background-color: #e5e7eb;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            background: linear-gradient(to right, #3b82f6, #60a5fa);
-            height: 100%;
-            border-radius: 9999px;
-            transition: width 1.5s ease-out;
-            width: 0%; /* Initial width */
-        }
-        
-        /* Header styling */
+        /* Header styling with a subtle pattern */
         .header-bg {
-             background-color: #0c0a09;
-             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25' height='100%25' viewBox='0 0 1600 800'%3E%3Cg %3E%3Cpolygon fill='%2318181b' points='1600 160 0 460 0 350 1600 50'/%3E%3Cpolygon fill='%2327272a' points='1600 260 0 560 0 450 1600 150'/%3E%3Cpolygon fill='%2352525b' points='1600 360 0 660 0 550 1600 250'/%3E%3Cpolygon fill='%2371717a' points='1600 460 0 760 0 650 1600 350'/%3E%3Cpolygon fill='%23a1a1aa' points='1600 800 0 800 0 750 1600 450'/%3E%3C/g%3E%3C/svg%3E");
-             background-attachment: fixed;
-             background-size: cover;
+            background-color: #0f172a; /* Slate-900 */
+            background-image: 
+                radial-gradient(circle at 1px 1px, #334155 1px, transparent 0),
+                radial-gradient(circle at 10px 10px, #334155 1px, transparent 0);
+            background-size: 20px 20px;
         }
-
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Header Section -->
     <header class="header-bg text-white shadow-lg">
-        <div class="container mx-auto px-6 py-20 text-center">
-            <div class="bg-black bg-opacity-50 rounded-lg p-8">
-                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">Censo Nacional 2018: Una Radiografía de Colombia</h1>
-                <p class="text-lg md:text-xl text-blue-200 max-w-3xl mx-auto">Un análisis interactivo de los datos revelados por el DANE sobre la población y vivienda en el país.</p>
+        <div class="container mx-auto px-6 py-24 text-center">
+            <div class="bg-slate-900 bg-opacity-60 rounded-xl p-8 backdrop-blur-sm">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+                    Censo Nacional 2018: Una Radiografía de Colombia
+                </h1>
+                <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto">
+                    Un análisis de los datos revelados por el DANE sobre quiénes somos, dónde estamos y cómo vivimos los colombianos.
+                </p>
                 <div class="mt-8">
-                    <p class="text-sm font-semibold">Realizado por: Rayo Palatianos</p>
-                    <p class="text-xs text-blue-300">Tecnólogo en Análisis y Desarrollo de Software - SENA</p>
+                    <p class="text-sm font-semibold tracking-wide">Presentado por: Rayo Palatianos</p>
+                    <p class="text-xs text-slate-400">Tecnólogo en Análisis y Desarrollo de Software - SENA</p>
                 </div>
             </div>
         </div>
@@ -100,68 +94,71 @@
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-16">
         
+        <!-- Section: Data Collection Methodology -->
+        <section id="metodologia" class="fade-in-section mb-24">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+                    ¿Cómo se Obtuvieron los Datos?
+                </h2>
+                <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">
+                    El DANE utilizó una metodología mixta para asegurar una recolección de datos completa y confiable en todo el territorio nacional.
+                </p>
+                <div class="grid md:grid-cols-2 gap-8 text-center">
+                    <div class="stat-card">
+                        <i class="fas fa-laptop-code text-4xl gradient-text mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">eCenso Digital</h3>
+                        <p class="text-slate-500">
+                            Se implementó un formulario en línea que permitió a los hogares auto-diligenciar su información, modernizando el proceso.
+                        </p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-door-open text-4xl gradient-text mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Censo Puerta a Puerta</h3>
+                        <p class="text-slate-500">
+                            Encuestadores visitaron las viviendas en todo el país para recolectar los datos de forma presencial, garantizando la cobertura.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Section: ¿Cuántos somos? -->
         <section id="cuantos-somos" class="fade-in-section mb-24">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">¿Cuántos somos?</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">El censo reveló una población de 48.2 millones de colombianos y mostró cambios significativos en la estructura demográfica del país.</p>
+            <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">El censo reveló una población de 48.2 millones de colombianos y mostró cambios significativos en la estructura demográfica del país.</p>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Card: Total Population -->
-                <div class="stat-card text-center">
-                    <i class="fas fa-users text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-2xl font-bold mb-2">48.2 Millones</h3>
-                    <p class="text-gray-500">de personas estimadas</p>
-                </div>
-
-                <!-- Card: Gender Distribution -->
-                <div class="stat-card">
-                    <h3 class="text-xl font-bold mb-4 text-center">Distribución por Género</h3>
-                    <div class="flex items-center justify-around">
-                        <div class="text-center">
-                            <i class="fas fa-female text-4xl text-blue-500 mb-2"></i>
-                            <p class="text-2xl font-bold">51.2%</p>
-                            <p class="text-gray-500">Mujeres</p>
-                        </div>
-                        <div class="text-center">
-                           <i class="fas fa-male text-4xl text-blue-800 mb-2"></i>
-                           <p class="text-2xl font-bold">48.8%</p>
-                           <p class="text-gray-500">Hombres</p>
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Stat Cards -->
+                <div class="space-y-8">
+                    <div class="stat-card text-center">
+                        <i class="fas fa-users text-4xl gradient-text mb-4"></i>
+                        <h3 class="text-4xl font-bold mb-2">48.2 Millones</h3>
+                        <p class="text-slate-500">de personas estimadas</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 class="text-xl font-bold mb-4 text-center">Distribución por Género</h3>
+                        <div class="flex items-center justify-around">
+                            <div class="text-center">
+                                <i class="fas fa-female text-4xl text-pink-500 mb-2"></i>
+                                <p class="text-2xl font-bold">51.2%</p>
+                                <p class="text-slate-500">Mujeres</p>
+                            </div>
+                            <div class="text-center">
+                               <i class="fas fa-male text-4xl text-blue-500 mb-2"></i>
+                               <p class="text-2xl font-bold">48.8%</p>
+                               <p class="text-slate-500">Hombres</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Card: Population Aging -->
-                <div class="stat-card">
-                     <h3 class="text-xl font-bold mb-4 text-center">Estructura por Edad</h3>
-                     <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-base font-medium text-blue-700">Jóvenes (0-14 años)</span>
-                                <span class="text-sm font-medium text-blue-700">22.6%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 22.6%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-base font-medium text-green-700">Adultos (15-65 años)</span>
-                                <span class="text-sm font-medium text-green-700">68.2%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-500 h-2.5 rounded-full" style="width: 68.2%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-base font-medium text-purple-700">Mayores (+65 años)</span>
-                                <span class="text-sm font-medium text-purple-700">9.1%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-purple-600 h-2.5 rounded-full" style="width: 9.1%"></div>
-                            </div>
-                        </div>
-                     </div>
+                
+                <!-- Chart: Age Structure -->
+                <div class="stat-card lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-2 text-center">Estructura de la Población por Edad</h3>
+                     <p class="text-center text-sm text-slate-500 mb-6">Se observa una tendencia al envejecimiento, con una base de jóvenes más reducida y una población mayor en crecimiento.</p>
+                    <div class="h-64 md:h-80 relative">
+                        <canvas id="ageStructureChart"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
@@ -169,23 +166,23 @@
         <!-- Section: ¿Dónde estamos? -->
         <section id="donde-estamos" class="fade-in-section mb-24">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">¿Dónde estamos?</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">La distribución territorial muestra una clara preferencia por la vida urbana, un fenómeno que define las dinámicas sociales y económicas.</p>
+            <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">La distribución territorial muestra una clara preferencia por la vida urbana, un fenómeno que define las dinámicas sociales y económicas.</p>
             
             <div class="grid md:grid-cols-3 gap-8 text-center">
                  <div class="stat-card">
                     <i class="fas fa-city text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-5xl font-extrabold">77.1%</h3>
-                    <p class="text-gray-500 mt-2">Vive en cabeceras municipales</p>
+                    <h3 class="text-5xl font-extrabold text-slate-800">77.1%</h3>
+                    <p class="text-slate-500 mt-2 font-medium">Vive en cabeceras municipales</p>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-tree text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-5xl font-extrabold">15.8%</h3>
-                    <p class="text-gray-500 mt-2">Vive en zonas rurales dispersas</p>
+                    <h3 class="text-5xl font-extrabold text-slate-800">15.8%</h3>
+                    <p class="text-slate-500 mt-2 font-medium">Vive en zonas rurales dispersas</p>
                 </div>
                 <div class="stat-card">
                     <i class="fas fa-store text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-5xl font-extrabold">7.1%</h3>
-                    <p class="text-gray-500 mt-2">Vive en centros poblados</p>
+                    <h3 class="text-5xl font-extrabold text-slate-800">7.1%</h3>
+                    <p class="text-slate-500 mt-2 font-medium">Vive en centros poblados</p>
                 </div>
             </div>
         </section>
@@ -193,90 +190,66 @@
         <!-- Section: ¿Cómo vivimos? -->
         <section id="como-vivimos" class="fade-in-section mb-24">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">¿Cómo vivimos?</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Los hogares en Colombia han evolucionado, reflejando nuevas estructuras familiares y un crecimiento notable en el número de viviendas.</p>
+            <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">Los hogares en Colombia han evolucionado, reflejando nuevas estructuras familiares y un crecimiento en el acceso a servicios.</p>
             
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="stat-card">
-                    <i class="fas fa-home text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-2xl font-bold mb-2">13.5 Millones de Viviendas</h3>
-                    <p class="text-gray-500">Un crecimiento del 29% desde 2005, mostrando un importante desarrollo en infraestructura habitacional.</p>
+            <div class="grid lg:grid-cols-5 gap-8">
+                <!-- Housing Info -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="stat-card h-full flex flex-col justify-center">
+                        <i class="fas fa-home text-4xl gradient-text mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">13.5 Millones de Viviendas</h3>
+                        <p class="text-slate-500">Un crecimiento del 29.5% respecto a 2005, mostrando un desarrollo en infraestructura habitacional.</p>
+                    </div>
+                     <div class="stat-card h-full flex flex-col justify-center">
+                        <i class="fas fa-user-friends text-4xl gradient-text mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Hogares más Pequeños</h3>
+                        <p class="text-slate-500">El tamaño promedio del hogar se redujo, con un aumento significativo de hogares unipersonales.</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <i class="fas fa-users-viewfinder text-4xl gradient-text mb-4"></i>
-                    <h3 class="text-2xl font-bold mb-2">Hogares más Pequeños</h3>
-                    <p class="text-gray-500">Los hogares de una persona pasaron del 11% al 18%, mientras que los de 5 o más personas se redujeron del 33% al 16%.</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Section: Servicios Públicos -->
-        <section id="servicios-publicos" class="fade-in-section mb-24">
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Acceso a Servicios Públicos</h2>
-            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">La cobertura de servicios esenciales ha mejorado, indicando un progreso en la calidad de vida a nivel nacional.</p>
-            
-            <div class="stat-card p-6 md:p-8">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 text-center">
-                    <div class="flex flex-col items-center">
-                        <i class="fas fa-bolt text-3xl text-yellow-500 mb-3"></i>
-                        <span class="text-xl font-bold">96.3%</span>
-                        <span class="text-sm text-gray-500">Energía</span>
-                    </div>
-                     <div class="flex flex-col items-center">
-                        <i class="fas fa-tint text-3xl text-blue-500 mb-3"></i>
-                        <span class="text-xl font-bold">86.4%</span>
-                        <span class="text-sm text-gray-500">Acueducto</span>
-                    </div>
-                     <div class="flex flex-col items-center">
-                        <i class="fas fa-water text-3xl text-gray-600 mb-3"></i>
-                        <span class="text-xl font-bold">76.6%</span>
-                        <span class="text-sm text-gray-500">Alcantarillado</span>
-                    </div>
-                     <div class="flex flex-col items-center">
-                        <i class="fas fa-fire text-3xl text-orange-500 mb-3"></i>
-                        <span class="text-xl font-bold">66.8%</span>
-                        <span class="text-sm text-gray-500">Gas Natural</span>
-                    </div>
-                     <div class="flex flex-col items-center col-span-2 md:col-span-1 lg:col-span-1">
-                        <i class="fas fa-wifi text-3xl text-indigo-500 mb-3"></i>
-                        <span class="text-xl font-bold">43.4%</span>
-                        <span class="text-sm text-gray-500">Internet</span>
+                <!-- Chart: Public Services -->
+                <div class="stat-card lg:col-span-3">
+                    <h3 class="text-xl font-bold text-center mb-2">Acceso a Servicios Públicos</h3>
+                    <p class="text-center text-sm text-slate-500 mb-6">Aunque la cobertura ha mejorado, persisten brechas importantes, especialmente en conectividad.</p>
+                    <div class="h-80 md:h-96 relative">
+                        <canvas id="servicesChart"></canvas>
                     </div>
                 </div>
             </div>
         </section>
         
-        <!-- Section: Conclusiones -->
+        <!-- Section: Conclusions -->
         <section id="conclusiones" class="fade-in-section">
             <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Conclusiones Clave</h2>
-             <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Los datos del censo son fundamentales para entender las transformaciones de Colombia y planificar el futuro.</p>
-             <div class="bg-white rounded-lg shadow p-8 max-w-4xl mx-auto">
-                 <ul class="space-y-4">
+             <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">Los datos del censo son fundamentales para entender las transformaciones de Colombia y planificar su futuro.</p>
+             <div class="bg-white rounded-xl shadow border border-slate-200 p-8 max-w-4xl mx-auto">
+                 <ul class="space-y-6">
                      <li class="flex items-start">
-                         <i class="fas fa-chart-line text-2xl text-blue-600 mr-4 mt-1"></i>
+                         <i class="fas fa-chart-line text-xl text-indigo-600 mr-5 mt-1 fa-fw"></i>
                          <div>
-                            <h4 class="font-bold">Envejecimiento Poblacional</h4>
-                            <p class="text-gray-600">La disminución de la natalidad y el aumento de la esperanza de vida exigen nuevas políticas en salud y pensiones.</p>
+                            <h4 class="font-bold text-slate-800">Envejecimiento Poblacional</h4>
+                            <p class="text-slate-600">La disminución de la natalidad y el aumento de la esperanza de vida exigen nuevas políticas en salud, pensiones y cuidado.</p>
                          </div>
                      </li>
                      <li class="flex items-start">
-                         <i class="fas fa-house-user text-2xl text-blue-600 mr-4 mt-1"></i>
+                         <i class="fas fa-house-user text-xl text-indigo-600 mr-5 mt-1 fa-fw"></i>
                          <div>
-                            <h4 class="font-bold">Familias más Pequeñas</h4>
-                            <p class="text-gray-600">La transformación de los hogares impacta el mercado inmobiliario, el consumo y la demanda de servicios.</p>
+                            <h4 class="font-bold text-slate-800">Transformación Familiar</h4>
+                            <p class="text-slate-600">La tendencia hacia hogares más pequeños impacta el mercado inmobiliario, el consumo y la demanda de servicios.</p>
                          </div>
                      </li>
                      <li class="flex items-start">
-                         <i class="fas fa-building text-2xl text-blue-600 mr-4 mt-1"></i>
+                         <i class="fas fa-building-columns text-xl text-indigo-600 mr-5 mt-1 fa-fw"></i>
                          <div>
-                            <h4 class="font-bold">Predominio Urbano</h4>
-                            <p class="text-gray-600">La alta concentración en ciudades plantea retos en movilidad, vivienda y sostenibilidad ambiental.</p>
+                            <h4 class="font-bold text-slate-800">Concentración Urbana</h4>
+                            <p class="text-slate-600">La alta densidad en ciudades plantea retos en movilidad, vivienda, sostenibilidad ambiental y desarrollo rural.</p>
                          </div>
                      </li>
                       <li class="flex items-start">
-                         <i class="fas fa-plug-circle-check text-2xl text-blue-600 mr-4 mt-1"></i>
+                         <i class="fas fa-wifi text-xl text-indigo-600 mr-5 mt-1 fa-fw"></i>
                          <div>
-                            <h4 class="font-bold">Mejora en Servicios</h4>
-                            <p class="text-gray-600">Aunque hay avances, persisten brechas, especialmente en la conectividad a internet, clave para el desarrollo.</p>
+                            <h4 class="font-bold text-slate-800">Brecha Digital</h4>
+                            <p class="text-slate-600">A pesar de los avances en servicios básicos, la conectividad a internet sigue siendo un desafío clave para la equidad y el desarrollo.</p>
                          </div>
                      </li>
                  </ul>
@@ -285,35 +258,169 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-24 py-8">
+    <footer class="bg-slate-800 text-white mt-24 py-10">
         <div class="container mx-auto px-6 text-center">
-            <p>Trabajo realizado por: <strong>Rayo Palatianos</strong></p>
-            <p class="text-sm text-gray-400">Programa: Tecnólogo en Análisis y Desarrollo de Software</p>
-            <p class="text-sm text-gray-400">Centro de Formación: SENA – Pensilvania, Caldas</p>
-             <p class="text-sm text-gray-400 mt-2">Ficha: (3134559)</p>
+            <p class="font-semibold">Trabajo realizado por: Rayo Palatianos</p>
+            <p class="text-sm text-slate-400 mt-1">Programa: Tecnólogo en Análisis y Desarrollo de Software</p>
+            <p class="text-sm text-slate-400">SENA – Centro para la Formación Cafetera, Regional Caldas</p>
+            <p class="text-sm text-slate-400 mt-2">Ficha: (3134559)</p>
         </div>
     </footer>
 
-
     <script>
-        // JavaScript for fade-in animations on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const sections = document.querySelectorAll('.fade-in-section');
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Intersection Observer for fade-in animations ---
+        const sections = document.querySelectorAll('.fade-in-section');
+        const chartElements = {
+            age: { el: document.getElementById('ageStructureChart'), drawn: false },
+            services: { el: document.getElementById('servicesChart'), drawn: false }
+        };
 
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                // Fade in the section when it's visible
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+
+                    // Check if the visible section contains a chart and draw it
+                    if (entry.target.contains(chartElements.age.el) && !chartElements.age.drawn) {
+                        drawAgeChart();
+                        chartElements.age.drawn = true;
                     }
-                });
-            }, {
-                threshold: 0.1
+                    if (entry.target.contains(chartElements.services.el) && !chartElements.services.drawn) {
+                        drawServicesChart();
+                        chartElements.services.drawn = true;
+                    }
+                }
             });
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
+        }, {
+            threshold: 0.2 // Trigger when 20% of the element is visible
         });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // --- Chart.js Configurations ---
+
+        // 1. Age Structure Doughnut Chart
+        function drawAgeChart() {
+            const ctx = chartElements.age.el.getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Jóvenes (0-14 años)', 'Adultos (15-64 años)', 'Mayores (65+ años)'],
+                    datasets: [{
+                        data: [22.6, 68.2, 9.1],
+                        backgroundColor: [
+                            '#60a5fa', // blue-400
+                            '#2563eb', // blue-600
+                            '#4f46e5'  // indigo-600
+                        ],
+                        borderColor: '#f8fafc', // Background color for spacing
+                        borderWidth: 4,
+                        hoverOffset: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    family: "'Inter', sans-serif"
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1200
+                    }
+                }
+            });
+        }
+
+        // 2. Public Services Bar Chart
+        function drawServicesChart() {
+            const ctx = chartElements.services.el.getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Energía Eléctrica', 'Acueducto', 'Alcantarillado', 'Gas Natural', 'Internet Fijo o Móvil'],
+                    datasets: [{
+                        label: 'Cobertura Nacional (%)',
+                        data: [96.3, 86.4, 76.6, 66.8, 43.4],
+                        backgroundColor: [
+                           '#facc15', // yellow-400
+                           '#3b82f6', // blue-500
+                           '#6b7280', // gray-500
+                           '#f97316', // orange-500
+                           '#6366f1'  // indigo-500
+                        ],
+                        borderRadius: 6,
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Makes the bar chart horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                             grid: {
+                                drawOnChartArea: false
+                            }
+                        },
+                        y: {
+                             grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // We don't need a legend for a single dataset
+                        },
+                         tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Cobertura: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                     animation: {
+                        duration: 1200,
+                        easing: 'easeOutCubic',
+                        from: (ctx) => {
+                           if (ctx.type === 'data') {
+                              if (ctx.mode === 'y') {
+                                 return ctx.y;
+                              }
+                              return ctx.x - 200; // Animate from left
+                           }
+                        }
+                    }
+                }
+            });
+        }
+    });
     </script>
 
 </body>
